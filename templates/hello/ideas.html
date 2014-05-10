@@ -73,8 +73,13 @@
 
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="hero-unit">
-           <h1>{{ ideas.greetings }}</h1>
+           <h1>{{ ideas.name }}</h1>
 	   <h2>{{ ideas.anotherline }}</h2>
+	   {% for i in ideas %}
+	   <h1>	{{ i.name }} </h1>
+	   <h2> {{ i.quote }} </h2>
+	   <h3> {{ i.stage }} </h3>
+	   {% endfor %}
       </div>
 
    <!-- What is a carousel? -->

@@ -7,6 +7,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.shortcuts import render
 from google.appengine.ext import ndb
+from google.appengine.ext import db
 import logging
 import models
 import searchclient
@@ -65,41 +66,37 @@ class HeroView(TemplateView):
     template_name = "hello/hero.html"
 
 def ThanksView(request):
+    logging.warning(request)
+    idea = request.POST
+    s = story()
+    logging.warning(idea)
+    s.name = idea.get("name")
+    s.quote = idea.get("quote")
+    s.stage = idea.get("stage")
+    s.put()
     return render_to_response('hello/thanks.html' , {})
 
 class IdeaForm(forms.Form):
-    stage = forms.CharField()
     name = forms.CharField()
+    quote = forms.CharField()
+    stage = forms.CharField()
+
 
 def idea_Form(request,argument):
     logging.warning('inside your idea. Being There')
     logging.warning(request)
-    if request.method == 'POST':
-        logging.warning('Post has struck')
-        form = IdeaForm(request.POST)
-        idea = form.save(commit=True)
-        # print "hello carrie"
-        # logging.debug("hello")
-        # logging.info('should have just saved')
-        # idea.put()
-        # anIdea = idea.get()
-        # logging.debug('Start guestbook signing request')
-        # print anIdea
-        # logging.getLogger().setLevel(logging.DEBUG)
-        return HttpResponseRedirect('/ideas/form/')
-    else:
-        form = IdeaForm()
-        logging.warning('else statement')
-    logging.warning('skip all if else?')
+    form = IdeaForm()
     return render(request, 'hello/idea_form.html', {'form':form, })
 
 def IdeasView(request):
     # This should return all objects of class Idea
-    #ideas = Idea.get()
-    ideas = {
-	'greetings': 'Where is the data?',
-	'anotherline': 'More to say here?'
-    }
+    ideas = story.all()
+    # ideas = {
+	# 'greetings': 'Where is the data?',
+	# 'anotherline': 'More to say here?'
+    # }
     logging.warning('trying this')
     logging.warning(ideas)
+    for i in ideas:
+        print i.name
     return render_to_response('hello/ideas.html' , {'ideas':ideas, })
